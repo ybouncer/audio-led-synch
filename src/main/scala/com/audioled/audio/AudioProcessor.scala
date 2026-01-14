@@ -27,26 +27,23 @@ class AudioProcessor(config: AudioLEDConfig) extends LazyLogging {
    */
   def processAudioFile(filePath: String): Observable[AudioFeatures] = {
     Observable.fromTask(loadAudioFile(filePath))
-      .flatMap(audioData => processAudioData(audioData))
-      .onErrorHandle { ex =>
-        logger.error(s"Error processing audio: ${ex.getMessage}")
-        AudioFeatures(
-          timestamp = System.currentTimeMillis(),
-          energy = 0.0,
-          bassEnergy = 0.0,
-          midEnergy = 0.0,
-          highEnergy = 0.0,
-          spectralCentroid = 0.0,
-          isBeat = false,
-          tempo = None,
-          samples = Array.empty
-        )
+      .flatMap { audioData =>
+        if (audioData.isEmpty) {
+          logger.error(s"No audio data loaded from file: $filePath")
+          Observable.raiseError(new RuntimeException(s"Failed to load audio data from: $filePath"))
+        } else {
+          logger.info(s"Processing ${audioData.length} samples from file")
+          processAudioData(audioData)
+        }
       }
+      .doOnError(ex => monix.eval.Task.eval {
+        logger.error(s"Error processing audio: ${ex.getMessage}", ex)
+      })
   }
   
   /**
    * Creates an Observable stream from real-time microphone input
-   * Demonstrates: push-based reactive stream
+   * Demonstrates: push-based reactive streamc
    */
   def processRealtimeAudio(): Observable[AudioFeatures] = {
     Observable.unsafeCreate[Array[Byte]] { subscriber =>
@@ -181,37 +178,81 @@ class AudioProcessor(config: AudioLEDConfig) extends LazyLogging {
    */
   private def loadAudioFile(filePath: String): Task[Array[Double]] = Task {
     logger.info(s"Loading audio file: $filePath")
-    
+
     val file = new File(filePath)
     val audioInputStream = AudioSystem.getAudioInputStream(file)
     val format = audioInputStream.getFormat
-    
-    // Convert to mono PCM if necessary
-    val monoFormat = new AudioFormat(
+
+    logger.info(s"Original format: $format")
+    logger.info(s"  Channels: ${format.getChannels}, Sample rate: ${format.getSampleRate}, Bits: ${format.getSampleSizeInBits}")
+
+    // Target format - match the file's sample rate initially, then we work with it
+    val targetSampleRate = if (format.getSampleRate > 0) format.getSampleRate else config.sampleRate.toFloat
+
+    // Step 1: Convert to PCM if necessary (handles MP3, etc.)
+    val pcmFormat = new AudioFormat(
       AudioFormat.Encoding.PCM_SIGNED,
-      config.sampleRate.toFloat,
+      targetSampleRate,
       16,
-      1, // mono
-      2, // frame size
-      config.sampleRate.toFloat,
+      format.getChannels, // Keep original channels first
+      format.getChannels * 2, // frame size = channels * 2 bytes
+      targetSampleRate,
       false // little endian
     )
-    
-    val convertedStream = if (format.matches(monoFormat)) {
+
+    val pcmStream = if (format.getEncoding == AudioFormat.Encoding.PCM_SIGNED &&
+                        format.getSampleSizeInBits == 16) {
       audioInputStream
     } else {
-      AudioSystem.getAudioInputStream(monoFormat, audioInputStream)
+      try {
+        AudioSystem.getAudioInputStream(pcmFormat, audioInputStream)
+      } catch {
+        case e: Exception =>
+          logger.warn(s"Could not convert to PCM: ${e.getMessage}, using original stream")
+          audioInputStream
+      }
     }
-    
-    // Read all bytes
-    val allBytes = Iterator.continually(convertedStream.read())
-      .takeWhile(_ != -1)
-      .map(_.toByte)
-      .toArray
-    
-    convertedStream.close()
-    
-    bytesToDoubles(allBytes)
+
+    // Read all bytes using buffer (required for frame size > 1)
+    val actualFormat = pcmStream.getFormat
+    val channels = actualFormat.getChannels
+    val bytesPerSample = actualFormat.getSampleSizeInBits / 8
+    val frameSize = channels * bytesPerSample
+
+    logger.info(s"Working format: $actualFormat")
+    logger.info(s"Frame size: $frameSize bytes (channels=$channels, bytesPerSample=$bytesPerSample)")
+
+    // Read in chunks matching frame size
+    val buffer = new Array[Byte](frameSize * 1024) // Read 1024 frames at a time
+    val allBytesBuilder = Array.newBuilder[Byte]
+
+    var bytesRead = pcmStream.read(buffer)
+    while (bytesRead > 0) {
+      allBytesBuilder ++= buffer.take(bytesRead)
+      bytesRead = pcmStream.read(buffer)
+    }
+
+    pcmStream.close()
+    val allBytes = allBytesBuilder.result()
+    logger.info(s"Read ${allBytes.length} bytes from audio file")
+
+    // Convert bytes to doubles, handling stereo by averaging channels
+    val samples = allBytes.grouped(frameSize).flatMap { frame =>
+      if (frame.length >= frameSize) {
+        // Average all channels to mono
+        val channelSamples = (0 until channels).map { ch =>
+          val offset = ch * bytesPerSample
+          val sample = (frame(offset + 1) << 8) | (frame(offset) & 0xFF)
+          sample.toShort.toDouble / 32768.0
+        }
+        Some(channelSamples.sum / channels) // Average to mono
+      } else {
+        None
+      }
+    }.toArray
+
+    logger.info(s"Converted to ${samples.length} mono samples")
+    samples
   }
   
   /**
@@ -219,9 +260,13 @@ class AudioProcessor(config: AudioLEDConfig) extends LazyLogging {
    * Demonstrates: flatMap and chunking operations
    */
   private def processAudioData(audioData: Array[Double]): Observable[AudioFeatures] = {
+    // Calculate delay to match real-time playback: each chunk represents bufferSize/sampleRate seconds
+    val chunkDurationMs = (config.bufferSize.toDouble / config.sampleRate * 1000).toLong
+
     Observable.fromIterable(audioData.grouped(config.bufferSize).toSeq)
       .filter(_.length == config.bufferSize)
       .map(analyzeAudioBuffer)
+      .delayOnNext(chunkDurationMs.millis)  // Emit at real-time pace
   }
   
   // === Audio Processing Utilities ===
