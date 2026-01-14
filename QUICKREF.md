@@ -112,7 +112,7 @@ audio-led-sync {
 
 | Problem | Solution |
 |---------|----------|
-| "sbt not found" | Install sbt: `brew install sbt` (Mac) or visit scala-sbt.org |
+| "sbt not found" | Install sbt: visit scala-sbt.org |
 | "Java heap space" | Add to sbt: `-J-Xmx2G` |
 | GUI not showing | Set `enable-gui = true` in config |
 | Audio file error | Use WAV format, 16-bit PCM |
@@ -323,4 +323,3 @@ sbt -Dakka.loglevel=DEBUG run
 - Resilient (error handling throughout)
 - Concurrent (Actors for isolation)
 
-Start simple, experiment, and have fun! 🎵✨

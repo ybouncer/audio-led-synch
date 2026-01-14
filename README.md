@@ -2,7 +2,7 @@
 
 A Scala-based reactive system for synchronizing LEDs with audio input, demonstrating advanced concepts from reactive programming.
 
-## 🎯 Project Overview
+## Project Overview
 
 This project processes audio in real-time and synchronizes LED patterns with musical features (rhythm, bass, mids, highs, beats). It showcases concepts from the course slides on reactive programming, including:
 
@@ -12,7 +12,7 @@ This project processes audio in real-time and synchronizes LED patterns with mus
 - **Monads** (Try, Option, Future for effect handling)
 - **For-comprehensions** (composing async operations)
 
-## 📚 Key Concepts Demonstrated
+## Key Concepts Demonstrated
 
 ### 1. Observable Streams (Chapter 5: From Futures to Observables)
 
@@ -66,7 +66,7 @@ for {
 
 **From slides**: "Monads allow to build computations by composing operations in a useful way"
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐
@@ -99,7 +99,7 @@ for {
 └─────────────────┴──────────────────┘
 ```
 
-## 🚀 Running the Application
+## Running the Application
 
 ### Prerequisites
 
@@ -140,7 +140,7 @@ sbt "run --realtime"
    sbt "run --realtime"
    ```
 
-## 🎨 LED Patterns
+## LED Patterns
 
 ### Available Patterns
 
@@ -171,7 +171,7 @@ sbt "run --realtime"
    }
    ```
 
-## 🎵 Audio Analysis Features
+## Audio Analysis Features
 
 The system extracts these features from audio:
 
@@ -183,7 +183,7 @@ The system extracts these features from audio:
 - **Beat Detection**: Rhythmic pulses using energy flux
 - **Waveform**: Raw audio samples for visualization
 
-## 📝 Code Structure
+## Code Structure
 
 ```
 src/main/scala/com/audioled/
@@ -199,7 +199,7 @@ src/main/scala/com/audioled/
 └── AudioLEDSyncApp.scala         # Main application
 ```
 
-## 🔧 Configuration
+## Configuration
 
 Edit `src/main/resources/application.conf`:
 
@@ -224,9 +224,9 @@ audio-led-sync {
 }
 ```
 
-## 🔌 Hardware Integration
+## Hardware Integration
 
-To connect to real hardware (as mentioned in your project):
+To connect to real hardware:
 
 ### 1. Enable Network Mode
 
@@ -273,19 +273,7 @@ def receiveLEDCommand(): Unit = {
 ================================================================================
  Audio-LED Synchronization System 
 ================================================================================
-
-Audio Features:
-  Energy:   ████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 68%
-  Bass:     ███████████████████████████████░░░░░░░░░░░░░░░░░░░ 85%
-  Mid:      █████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 52%
-  High:     ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 31%
-  Beat:     💥 BEAT!
-  Centroid: 1234 Hz
-
-LED States:
-┌────────────────────────────────────────────────────────────┐
-│████████▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░                          │
-└────────────────────────────────────────────────────────────┘
+bla bla bla 
 
 LED Details:
  0:🔴 85%   1:🔴 80%   2:🔴 75%   3:🟢 52%   4:🟢 48%
@@ -301,7 +289,7 @@ The GUI shows:
 - Waveform display
 - Control panel for pattern selection and brightness
 
-## 🎓 Learning Points
+## Learning Points
 
 ### 1. Reactive Streams (Observable)
 
@@ -364,7 +352,7 @@ val firePattern = Custom { features =>
 }
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run with test audio to verify everything works
@@ -377,11 +365,11 @@ sbt "run --test 10"
 # - No errors in processing
 ```
 
-## 🔗 Connecting to Your Project
+## Connecting to Our Project
 
-This code integrates with your "BraceLEDS connectés" project:
+This code integrates with our BraceLEDS  project:
 
-1. **Bracelets** = Individual LED actors (one per bracelet)
+1. **Bracelets** = Individual LED actors
 2. **Raspberry Pi** = LEDManager actor (central coordination)
 3. **WiFi/CoAP** = Message passing between actors
 4. **Audio Processing** = Microphone + AudioProcessor Observable
@@ -404,14 +392,14 @@ audioStream.subscribe { features =>
 }
 ```
 
-## 📖 Further Reading
+## Further Reading
 
 - Course slides: Chapters 4, 5, 6
 - Monix documentation: https://monix.io
 - Akka documentation: https://doc.akka.io
 - Scala reactive programming: https://www.reactive-streams.org
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Audio not loading?**
 - Check file format (WAV, 16-bit PCM preferred)
@@ -429,37 +417,7 @@ audioStream.subscribe { features =>
 - Check Akka logs
 - Verify message types match
 
-## 💡 Tips for Colleagues
 
-1. **Start Simple**: Run test mode first
-2. **Read the Slides**: Each concept maps to specific slides
-3. **Experiment**: Try different patterns
-4. **Extend**: Add your own custom patterns
-5. **Integrate**: Connect to real hardware when ready
 
-## 🎉 Demo Script
+#
 
-For presentation:
-
-```bash
-# 1. Show test audio with spectrum pattern
-sbt "run --test 30"
-
-# 2. Switch to energy pattern via GUI
-
-# 3. Explain reactive concepts while running
-
-# 4. Show code structure
-
-# 5. Demo custom pattern creation
-```
-
-## 📄 License
-
-Educational project for course INFO M453 - UNamur
-
----
-
-**Questions?** Contact your teammates or course instructors.
-**Issues?** Check the troubleshooting section above.
-**Want more?** Extend the patterns or add new visualizations!

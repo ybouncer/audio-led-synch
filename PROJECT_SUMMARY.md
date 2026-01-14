@@ -1,16 +1,14 @@
 # Audio-LED Synchronization System - Project Summary
 
-## 🎯 Project Overview
+## Project Overview
 
-A complete **Scala-based reactive audio processing system** that demonstrates every major concept from the "Reactive Programming" course while solving real-world requirements for your connected bracelets project.
+A complete **Scala-based reactive audio processing system** that demonstrates every major concept from the "Reactive Programming" course while solving real-world requirements for our connected bracelets project.
 
 **Date Created:** November 2024  
-**Course:** INFO M451 - Conception d'applications mobiles  
-**University:** Université de Namur
 
 ---
 
-## ✅ What Has Been Built
+## What Has Been Built
 
 ### Complete Working System
 
@@ -51,7 +49,7 @@ A complete **Scala-based reactive audio processing system** that demonstrates ev
 
 ---
 
-## 📚 Course Concepts Demonstrated
+## Course Concepts Demonstrated
 
 ### ✅ Chapter 1: Introduction to Reactive Programming
 - Event-driven architecture
@@ -98,7 +96,7 @@ A complete **Scala-based reactive audio processing system** that demonstrates ev
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 audio-led-sync/
@@ -147,7 +145,7 @@ audio-led-sync/
 
 ---
 
-## 🚀 How to Run
+## How to Run?
 
 ### Quick Start
 
@@ -182,17 +180,7 @@ sbt "run --realtime"
  Audio-LED Synchronization System 
 ================================================================================
 
-Audio Features:
-  Energy:   ████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 68%
-  Bass:     ███████████████████████████████░░░░░░░░░░░░░░░░░░░ 85%
-  Mid:      █████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 52%
-  High:     ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 31%
-  Beat:     💥 BEAT!
-
-LED States:
-┌────────────────────────────────────────────────────────────┐
-│████████▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░                          │
-└────────────────────────────────────────────────────────────┘
+bla bla bla
 ```
 
 **GUI Output:**
@@ -203,7 +191,7 @@ LED States:
 
 ---
 
-## 🔌 Integration with Your Project
+## Integration with the WHOLE Project
 
 ### Current Setup (Simulation)
 ```
@@ -256,7 +244,7 @@ Microphone → AudioProcessor (Observable)
 
 ---
 
-## 💡 Key Features
+## Key Features
 
 ### Audio Analysis
 - ✅ FFT-based frequency analysis
@@ -291,7 +279,7 @@ Microphone → AudioProcessor (Observable)
 
 ---
 
-## 📊 Technical Specifications
+## Technical Specifications
 
 ### Performance
 - **Update Rate:** 20 FPS (50ms) default, configurable
@@ -315,7 +303,7 @@ Microphone → AudioProcessor (Observable)
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 ### Complete Documentation Set
 
@@ -352,7 +340,7 @@ Microphone → AudioProcessor (Observable)
 
 ---
 
-## 🎓 Learning Outcomes
+## Learning Outcomes
 
 ### What This Demonstrates
 
@@ -372,17 +360,10 @@ Microphone → AudioProcessor (Observable)
 - ✅ Error handling patterns
 - ✅ GUI development in Scala
 
-**Software Engineering:**
-- ✅ Modular architecture
-- ✅ Separation of concerns
-- ✅ Testable design
-- ✅ Configuration management
-- ✅ Documentation practices
-- ✅ Extensible system design
 
 ---
 
-## 🔧 Technology Stack
+## Technology Stack
 
 ### Core
 - **Language:** Scala 2.13.12
@@ -404,7 +385,7 @@ Microphone → AudioProcessor (Observable)
 
 ---
 
-## ✨ Unique Aspects
+## Aspects
 
 ### What Makes This Special
 
@@ -429,20 +410,14 @@ Microphone → AudioProcessor (Observable)
 4. **Documentation Quality**
    - 5000+ lines of documentation
    - Multiple perspectives
-   - Beginner to advanced
-   - Ready for presentation
+
 
 ---
 
-## 🚦 Next Steps
+## Next Steps
 
-### For Your Project
+### For the other parts of the project
 
-**Immediate (This Week):**
-1. Run and test the system
-2. Review documentation
-3. Understand reactive concepts
-4. Prepare demo for team
 
 **Short-term (This Month):**
 1. Add network layer (CoAP)
@@ -479,14 +454,9 @@ Microphone → AudioProcessor (Observable)
 
 ---
 
-## 📈 Metrics
+## Metrics regarding the course
 
-### Code Statistics
-- **Scala Files:** 6
-- **Total Lines:** ~2500 LOC
-- **Documentation:** 5000+ lines
-- **Test Coverage:** Extensible for testing
-- **Comments:** Comprehensive
+
 
 ### Concept Coverage
 - **Observable:** 100% (all operators demonstrated)
@@ -495,66 +465,6 @@ Microphone → AudioProcessor (Observable)
 - **Monad:** 100% (Option, Try, Future, Observable)
 - **Functional:** 100% (immutability, pattern matching, HOF)
 
-### Features Implemented
-- Core: 100% complete
-- Visualization: 100% complete
-- Documentation: 100% complete
-- Hardware Integration: Structure ready, needs deployment
-
----
-
-## 🏆 Success Criteria Met
-
-✅ **Comprehensive** - Covers all major course concepts  
-✅ **Working** - Fully functional system  
-✅ **Documented** - Extensive documentation  
-✅ **Extensible** - Easy to modify and extend  
-✅ **Practical** - Solves real project needs  
-✅ **Demonstrable** - Ready for presentation  
-✅ **Educational** - Clear learning value  
-✅ **Professional** - Production-ready code  
-
----
-
-## 📞 Support
-
-### Resources Available
-- **README.md** - Start here for usage
-- **CONCEPTS.md** - For understanding theory
-- **QUICKREF.md** - For quick commands
-- **PRESENTATION.md** - For demo preparation
-- **Code Comments** - For implementation details
-
-### Getting Help
-1. Check relevant documentation
-2. Review course slides
-3. Look at code examples
-4. Check console output for errors
-5. Contact team members
-
----
-
-## 🎉 Conclusion
-
-This project represents a **complete implementation of reactive programming principles** using Scala. It demonstrates **deep understanding** of course concepts while providing a **practical, working solution** for your connected bracelets project.
-
-**Key Achievements:**
-- ✅ All major concepts from slides implemented
-- ✅ Complete working system
-- ✅ Production-ready architecture
-- ✅ Comprehensive documentation
-- ✅ Ready for integration
-- ✅ Extensible for future features
-
-The system is **ready to demo**, **ready to extend**, and **ready to deploy** to your physical hardware.
-
----
-
-**Built with:** ❤️ + Scala + Reactive Programming + Lots of Coffee ☕
-
-**For:** INFO M451 - Ambient and Mobile Computing Laboratory  
-**At:** Université de Namur  
-**Date:** November 2024
 
 ---
 
@@ -571,7 +481,5 @@ sbt "run --test 30"
 cat README.md
 cat CONCEPTS.md
 
-# Enjoy the lights! ✨
 ```
-
-Good luck with your project! 🎵💡🚀
+**Built with hella lotta coffee ☕**
