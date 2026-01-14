@@ -1,0 +1,6 @@
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] IncrementalCompile -----------[0m
+[0m[[0m[0mdebug[0m] [0m[0mIncrementalCompile.incrementalCompile[0m
+[0m[[0m[0mdebug[0m] [0m[0mprevious = Stamps for: 102 products, 6 sources, 11 libraries[0m
+[0m[[0m[0mdebug[0m] [0m[0mcurrent source = Set(${BASE}/src/main/scala/com/audioled/led/LEDControllerActor.scala, ${BASE}/src/main/scala/com/audioled/visualization/GUIVisualizer.scala, ${BASE}/src/main/scala/com/audioled/domain/Models.scala, ${BASE}/src/main/scala/com/audioled/audio/AudioProcessor.scala, ${BASE}/src/main/scala/com/audioled/AudioLEDSyncApp.scala, ${BASE}/src/main/scala/com/audioled/visualization/ConsoleVisualizer.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m> initialChanges = InitialChanges(Changes(added = Set(), removed = Set(), changed = Set(), unmodified = ...),Set(),Set(),API Changes: Set())[0m
+[0m[[0m[0mdebug[0m] [0m[0mNo changes[0m

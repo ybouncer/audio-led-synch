@@ -1,0 +1,31 @@
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\AudioLEDSyncApp.scala:132:58: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0m      import scala.concurrent.ExecutionContext.Implicits.global[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                         ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\AudioLEDSyncApp.scala:271:54: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0m  import scala.concurrent.ExecutionContext.Implicits.global[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                     ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\AudioLEDSyncApp.scala:278:56: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0m    import scala.concurrent.ExecutionContext.Implicits.global[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                       ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\audio\AudioProcessor.scala:21:45: implicit numeric widening[0m
+[0m[[0m[33mwarn[0m] [0m[0m  private val fft = new DoubleFFT_1D(config.fftSize)[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                            ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\audio\AudioProcessor.scala:115:39: implicit numeric widening[0m
+[0m[[0m[33mwarn[0m] [0m[0m    Observable.interval(1000.millis / updatesPerSecond)[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                      ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\audio\AudioProcessor.scala:116:13: implicit numeric widening[0m
+[0m[[0m[33mwarn[0m] [0m[0m      .take(totalUpdates)[0m
+[0m[[0m[33mwarn[0m] [0m[0m            ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\audio\AudioProcessor.scala:5:36: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport monix.reactive.{Observable, Observer}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                   ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\audio\AudioProcessor.scala:9:23: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0mimport java.io.{File, ByteArrayInputStream}[0m
+[0m[[0m[33mwarn[0m] [0m[0m                      ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\audio\AudioProcessor.scala:53:50: Unused import[0m
+[0m[[0m[33mwarn[0m] [0m[0m      import monix.execution.Scheduler.Implicits.global[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                                 ^[0m
+[0m[[0m[33mwarn[0m] [0m[0mC:\Users\yboun\Downloads\audio-led-sync\audio-led-sync\src\main\scala\com\audioled\visualization\GUIVisualizer.scala:154:48: Widening conversion from Int to Float is deprecated because it loses precision. Write `.toFloat` instead. [quickfixable][0m
+[0m[[0m[33mwarn[0m] [0m[0m                    (w - fm.stringWidth(text)) / 2,[0m
+[0m[[0m[33mwarn[0m] [0m[0m                                               ^[0m
+[0m[[0m[33mwarn[0m] [0m[0m10 warnings found[0m

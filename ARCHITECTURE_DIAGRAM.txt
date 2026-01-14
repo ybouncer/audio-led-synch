@@ -1,0 +1,276 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    AUDIO-LED SYNCHRONIZATION SYSTEM                           ║
+║                     Reactive Architecture Overview                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            AUDIO INPUT LAYER                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   ┌──────────────┐    ┌──────────────┐    ┌──────────────┐                │
+│   │  Audio File  │    │  Microphone  │    │ Test Audio   │                │
+│   │   (.wav)     │    │  (Realtime)  │    │ (Generated)  │                │
+│   └──────┬───────┘    └──────┬───────┘    └──────┬───────┘                │
+│          │                   │                   │                          │
+│          └───────────────────┴───────────────────┘                          │
+│                              │                                               │
+└──────────────────────────────┼───────────────────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      OBSERVABLE STREAM LAYER                                 │
+│                    (Chapter 5: Observables)                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   Observable[Array[Byte]]                                                   │
+│          │                                                                   │
+│          │ .map(bytesToDoubles)                                             │
+│          ▼                                                                   │
+│   Observable[Array[Double]]                                                 │
+│          │                                                                   │
+│          │ .bufferTimedAndCounted(50.millis)                                │
+│          ▼                                                                   │
+│   Observable[Array[Double]]                                                 │
+│          │                                                                   │
+│          │ .map(analyzeAudioBuffer)                                         │
+│          ▼                                                                   │
+│   Observable[AudioFeatures]                                                 │
+│          │                                                                   │
+│          │ .throttleLast(50.millis)        ← Rate limiting                  │
+│          ▼                                                                   │
+└──────────┼───────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      AUDIO ANALYSIS ENGINE                                   │
+│                  (FFT, Beat Detection, Features)                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   Input: Array[Double] (audio samples)                                      │
+│      │                                                                       │
+│      ├─► Apply Hann Window                                                  │
+│      │                                                                       │
+│      ├─► Perform FFT (Fast Fourier Transform)                               │
+│      │                                                                       │
+│      ├─► Calculate Frequency Band Energies:                                 │
+│      │      • Bass:    20-250 Hz     → bassEnergy                          │
+│      │      • Mid:     250-2000 Hz   → midEnergy                           │
+│      │      • High:    2000-8000 Hz  → highEnergy                          │
+│      │                                                                       │
+│      ├─► Calculate Spectral Centroid (brightness)                           │
+│      │                                                                       │
+│      └─► Detect Beats (energy flux algorithm)                               │
+│                                                                              │
+│   Output: AudioFeatures                                                     │
+│      • energy: Double                                                       │
+│      • bassEnergy: Double                                                   │
+│      • midEnergy: Double                                                    │
+│      • highEnergy: Double                                                   │
+│      • spectralCentroid: Double                                             │
+│      • isBeat: Boolean                                                      │
+│                                                                              │
+└──────────┼───────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          ACTOR SYSTEM LAYER                                  │
+│                    (Chapter 6: Actor Model)                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   ┌───────────────────────────────────────────────────┐                    │
+│   │           LED Manager Actor                        │                    │
+│   │  (Broadcasts to all LED controllers)              │                    │
+│   └─────────┬──────────────┬──────────────┬───────────┘                    │
+│             │              │              │                                 │
+│             ▼              ▼              ▼                                 │
+│   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                      │
+│   │ LED Ctrl 1  │  │ LED Ctrl 2  │  │ LED Ctrl N  │  ...                 │
+│   │ (Actor)     │  │ (Actor)     │  │ (Actor)     │                      │
+│   └─────────────┘  └─────────────┘  └─────────────┘                      │
+│                                                                              │
+│   Messages (! operator):                                                    │
+│   • UpdateFromAudio(features)                                               │
+│   • SetPattern(pattern)                                                     │
+│   • SetGlobalBrightness(brightness)                                         │
+│   • GetState(replyTo)                                                       │
+│                                                                              │
+│   Each Actor:                                                               │
+│   • Maintains own LED state                                                 │
+│   • Processes messages sequentially                                         │
+│   • Switches behavior with context.become                                   │
+│   • No shared mutable state!                                                │
+│                                                                              │
+└──────────┼───────────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       PATTERN APPLICATION LAYER                              │
+│                     (Functional Transformations)                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   AudioFeatures ──┬──► Spectrum Pattern                                     │
+│                   │     • Bass   → Red LEDs                                 │
+│                   │     • Mid    → Green LEDs                               │
+│                   │     • High   → Blue LEDs                                │
+│                   │                                                          │
+│                   ├──► Energy Pattern                                       │
+│                   │     • All LEDs show overall energy                      │
+│                   │     • Color based on spectral centroid                  │
+│                   │                                                          │
+│                   ├──► Beat Pattern                                         │
+│                   │     • Flash white on beats                              │
+│                   │     • Decay between beats                               │
+│                   │                                                          │
+│                   ├──► Wave Pattern                                         │
+│                   │     • Animated wave effect                              │
+│                   │     • Speed based on energy                             │
+│                   │                                                          │
+│                   └──► Custom Pattern                                       │
+│                        • User-defined function                              │
+│                        • Full access to audio features                      │
+│                                                                              │
+│   Output: Vector[LEDState]                                                  │
+│      Each LEDState has:                                                     │
+│      • id: Int (0 to N-1)                                                   │
+│      • color: Color (RGB)                                                   │
+│      • intensity: Double (0.0 to 1.0)                                       │
+│                                                                              │
+└──────────┼───────────────────────────────────────────────────────────────────┘
+           │
+           ├────────────────────┬──────────────────┐
+           │                    │                  │
+           ▼                    ▼                  ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│   Console UI     │  │      GUI         │  │   Network        │
+│                  │  │                  │  │   (Hardware)     │
+├──────────────────┤  ├──────────────────┤  ├──────────────────┤
+│ • ASCII bars     │  │ • Visual LEDs    │  │ • CoAP protocol  │
+│ • LED states     │  │ • Spectrum bars  │  │ • WiFi to ESP32  │
+│ • Beat indicator │  │ • Waveform       │  │ • Physical LEDs  │
+│ • Real-time      │  │ • Control panel  │  │ • RFID reader    │
+│   updates        │  │ • Pattern select │  │ • Vibration      │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         DATA FLOW EXAMPLE                                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Time: T
+─────────────────────────────────────────────────────────────────────────────
+1. Audio Input
+   └─► [0.5, -0.3, 0.8, -0.2, ...] (audio samples)
+
+2. Observable Transformation
+   └─► map, buffer, analyze
+
+3. Audio Features Extracted
+   AudioFeatures(
+     timestamp = 1638316800000,
+     energy = 0.75,
+     bassEnergy = 0.85,     ← Strong bass!
+     midEnergy = 0.52,
+     highEnergy = 0.31,
+     spectralCentroid = 450.0,
+     isBeat = true,         ← Beat detected!
+     samples = [...]
+   )
+
+4. Actor Receives Message
+   LEDController ! UpdateFromAudio(features)
+
+5. Pattern Applied (Spectrum)
+   LED 0 → Color.Red,    intensity = 0.85  (Bass zone)
+   LED 1 → Color.Red,    intensity = 0.80
+   LED 2 → Color.Red,    intensity = 0.75
+   LED 3 → Color.Green,  intensity = 0.52  (Mid zone)
+   LED 4 → Color.Green,  intensity = 0.48
+   LED 5 → Color.Green,  intensity = 0.45
+   LED 6 → Color.Blue,   intensity = 0.31  (High zone)
+   LED 7 → Color.Blue,   intensity = 0.28
+   LED 8 → Color.Blue,   intensity = 0.25
+   LED 9 → Color.Blue,   intensity = 0.20
+
+6. Visualization
+   Console: ████████▓▓▓▓▓▓▓▓▒▒▒▒░░░░░░░░
+   GUI:     [●●●●●●●●◐◐◐◐◐◐○○○○○○]  (glowing red→green→blue)
+   Network: "0:217,0,0;1:204,0,0;2:191,0,0;..." → ESP32
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                      COURSE CONCEPTS MAPPING                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Component               │ Course Chapter │ Key Concepts
+────────────────────────┼────────────────┼──────────────────────────────────
+Observable Stream       │ Chapter 5      │ Observable[T], map, flatMap, 
+                        │                │ filter, throttle, subscribe
+                        │                │
+Actor System            │ Chapter 6      │ Actor model, message passing (!),
+                        │                │ context.become, behavior switching,
+                        │                │ actor hierarchy
+                        │                │
+Audio Loading           │ Chapter 4      │ Future[T], Task[T], async/await,
+                        │                │ error handling, composition
+                        │                │
+Error Handling          │ Chapter 3      │ Try[T], Option[T], monadic
+                        │                │ composition, for-comprehension
+                        │                │
+Data Models             │ Chapter 2      │ Case classes, pattern matching,
+                        │                │ immutability, higher-order functions
+                        │                │
+Architecture            │ Chapter 1      │ Event-driven, resilient, elastic,
+                        │                │ responsive, message-driven
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         SCALABILITY                                          ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Single Bracelet (10 LEDs)
+─────────────────────────
+Audio → Observable → Actor → 10 LEDs
+Updates: 20 FPS
+Latency: < 100ms
+
+
+Multiple Bracelets (100 LEDs each)
+───────────────────────────────────
+                    ┌─► Actor 1 → Bracelet 1 (10 LEDs)
+Audio → Observable ─┼─► Actor 2 → Bracelet 2 (10 LEDs)
+                    ├─► Actor 3 → Bracelet 3 (10 LEDs)
+                    └─► ... (100 bracelets)
+
+• Each actor runs independently
+• No shared state = no contention
+• Scales linearly
+• Limited only by network bandwidth
+
+
+Concert Scale (1000+ people)
+────────────────────────────
+Multiple Raspberry Pi nodes:
+
+    Pi 1 → Bracelets 1-100
+    Pi 2 → Bracelets 101-200
+    Pi 3 → Bracelets 201-300
+    ... 
+
+Synchronized via master audio stream.
+Total capacity: Limited only by venue WiFi!
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        KEY ADVANTAGES                                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+✅ Non-blocking:    All operations are asynchronous
+✅ Scalable:        Add bracelets without code changes
+✅ Resilient:       Errors don't crash the system
+✅ Composable:      Easy to add new patterns/features
+✅ Type-safe:       Compiler catches errors
+✅ Concurrent:      Actors run in parallel
+✅ Testable:        Pure functions and isolated actors
+✅ Maintainable:    Clear separation of concerns
+
+
